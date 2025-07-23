@@ -5,53 +5,83 @@ from torchvision import transforms
 import gradio as gr
 
 
-# --- 1. Model Definition ---
-# The exact same HybridCNNTransformer class from your notebook must be defined here
-# so that PyTorch knows how to load the saved model weights.
 class HybridCNNTransformer(nn.Module):
+    """
+    Hybrid CNN + Transformer model for image classification.
+
+    - CNN Backbone: EfficientNet-B0 pretrained on ImageNet for feature extraction.
+    - Projection: 1x1 convolution to convert CNN features to embeddings for Transformer.
+    - Transformer Encoder: stacks multi-head self-attention layers.
+    - Classification head: Dense layer on CLS token output for final classes.
+
+    You can customize this model by:
+    - Adding dropout or normalization layers after CNN backbone.
+    - Altering Transformer encoder parameters (num_layers, nhead, dropout).
+    - Modifying classification head with more layers or activation.
+    """
+
     def __init__(self, num_classes):
         super(HybridCNNTransformer, self).__init__()
-        # CNN Backbone (EfficientNet)
+
+        # 1. CNN Backbone - remove final classifier, keep feature extractor.
         self.cnn_backbone = timm.create_model(
-            "efficientnet_b0", pretrained=True, num_classes=0, global_pool=""
+            "efficientnet_b0", pretrained=False, num_classes=0, global_pool=""
         )
         cnn_feature_dim = self.cnn_backbone.num_features
 
-        # Projection layer to match transformer dimension
+        # add extra features under this one as discussed in the meeting lol
+        # self.norm = nn.BatchNorm2d(cnn_feature_dim)
+        # self.extra_conv = nn.Conv2d(cnn_feature_dim, cnn_feature_dim, kernel_size=3, padding=1)
+        # self.cnn_dropout = nn.Dropout2d(0.2)
+
+        # 2. Project CNN feature maps into transformer embedding dimension.
         embed_dim = 256
         self.projection = nn.Conv2d(cnn_feature_dim, embed_dim, kernel_size=1)
 
-        # Transformer Encoder
+        # 3. Transformer Encoder setup
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=embed_dim, nhead=8, batch_first=True, dropout=0.2
         )
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=4)
 
-        # Classifier Head
+        # Learnable [CLS] token prepended to the sequence
         self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
+
+        # Dropout before classification head
         self.dropout = nn.Dropout(0.5)
+
+        # Final classification layer
         self.fc = nn.Linear(embed_dim, num_classes)
 
     def forward(self, x):
-        # Pass through CNN
+        # propagation ✨
         x = self.cnn_backbone(x)
-        # Project to transformer embedding dimension
+        # referring to the thing above, also add layers here coz why not
+        # x = self.norm(x)
+        # x = self.extra_conv(x)
+        # x = self.cnn_dropout(x)
+
+        # Project CNN features to transformer dimension
         x = self.projection(x)
-        # Reshape for transformer
+
+        # Flatten spatial dimensions to sequence tokens
         b, c, h, w = x.shape
-        x = x.flatten(2).permute(0, 2, 1)
-        # Prepend CLS token
+        x = x.flatten(2).permute(0, 2, 1)  # Shape: (B, Seq_len, Emb_dim)
+
+        # Prepend CLS token to sequence (for global representation)
         cls_tokens = self.cls_token.expand(b, -1, -1)
         x = torch.cat((cls_tokens, x), dim=1)
-        # Pass through transformer
+
+        # Transformer Encoder forward pass
         x = self.transformer_encoder(x)
-        # Get CLS token output
+
+        # Extract CLS token output
         cls_output = x[:, 0]
-        # Pass through classifier
         cls_output = self.dropout(cls_output)
+
+        # Classification head produces final logits
         output = self.fc(cls_output)
         return output
-
 
 # --- 2. Setup and Configuration ---
 # Define the same parameters and transformations as in your notebook
@@ -122,7 +152,7 @@ def predict(image):
 iface = gr.Interface(
     fn=predict,
     inputs=gr.Image(type="pil", label="Upload a Leaf Image"),
-    outputs=gr.Label(num_top_classes=2, label="Predictions"),
+    outputs=gr.Label(num_top_classes=4, label="Predictions"),
     title="Plant Leaf Disease Classifier",
     description="Upload an image of an apple leaf to classify its disease. This model can identify Black Rot, Cedar Rust, Scab, or a Healthy leaf.",
     examples=[
