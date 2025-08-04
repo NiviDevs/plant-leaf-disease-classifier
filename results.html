@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plant Disease Classification Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; color: #333; }
+        h1, h2 { color: #2c3e50; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+        img { width: 100%; max-width: 700px; display: block; margin-bottom: 30px; }
+        a { text-decoration: none; color: #2980b9; }
+        .link-section { margin: 20px 0; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+    </style>
+    <!-- PapaParse for CSV -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Plant Disease Classification - Results</h1>
+        <p>These are the results from the Hybrid CNN + Transformer model trained for plant disease classification.</p>
+
+        <h2>Training History</h2>
+        <img src="results/training_curves.png" alt="Training Curves">
+
+        <h2>Confusion Matrix</h2>
+        <img src="results/confusion_matrix.png" alt="Confusion Matrix">
+
+        <h2>ROC Curve</h2>
+        <img src="results/roc_curve.png" alt="ROC Curve">
+
+        <h2>t-SNE Visualization</h2>
+        <img src="results/tsne_visualization.png" alt="t-SNE Visualization">
+
+        <div class="link-section">
+            <h2>Download Metrics</h2>
+            <ul>
+                <li><a href="results/training_history.csv" download>Training History (CSV)</a></li>
+                <li><a href="results/classification_metrics.csv" download>Classification Metrics (CSV)</a></li>
+                <li><a href="results/classification_report.txt" download>Classification Report (TXT)</a></li>
+            </ul>
+        </div>
+
+        <h2>Classification Metrics (Interactive Table)</h2>
+        <div id="csv-table">Loading metrics...</div>
+    </div>
+
+    <script>
+        // Load CSV and convert to table
+        Papa.parse("results/classification_metrics.csv", {
+            download: true,
+            header: true,
+            complete: function(results) {
+                const data = results.data;
+                if (!data.length) return;
+
+                // Create table
+                let table = '<table><thead><tr>';
+                Object.keys(data[0]).forEach(key => table += `<th>${key}</th>`);
+                table += '</tr></thead><tbody>';
+
+                data.forEach(row => {
+                    table += '<tr>';
+                    Object.values(row).forEach(value => table += `<td>${value}</td>`);
+                    table += '</tr>';
+                });
+
+                table += '</tbody></table>';
+                document.getElementById("csv-table").innerHTML = table;
+            }
+        });
+    </script>
+</body>
+</html>
