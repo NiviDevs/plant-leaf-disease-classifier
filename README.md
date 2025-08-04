@@ -2,7 +2,7 @@
 
 # 🐐 THEGOAT: Plant Leaf Disease Classifier using CNN + Transformers
 
-This repository contains a research-grade implementation of a **Hybrid CNN + Transformer** model for classifying diseases in bell pepper leaves. 
+This repository contains a research-grade implementation of a **Hybrid CNN + Transformer** model for classifying diseases in apple leaves. 
 
 ---
 
