@@ -1,6 +1,6 @@
 
 
-# 🐐 THEGOAT: Plant Leaf Disease Classifier using CNN + Transformers
+# CNNTranApple: Apple Leaf Disease Classifier using CNN + Transformers
 
 This repository contains a research-grade implementation of a **Hybrid CNN + Transformer** model for classifying diseases in apple leaves. 
 
@@ -9,7 +9,7 @@ This repository contains a research-grade implementation of a **Hybrid CNN + Tra
 ## 📁 Project Structure
 
 ```
-THEGOAT.ipynb        # Main Jupyter Notebook
+MAINBOOK.ipynb        # Main Jupyter Notebook
 data/                # Folder for dataset
 results/             # Folder for output csv
 app.py               # WebApp to test
@@ -67,7 +67,7 @@ data/
 
 2. **Change Paths (if needed)**:
 
-   * Update the dataset paths in the notebook (`THEGOAT.ipynb`) to match your local directory structure.
+   * Update the dataset paths in the notebook (`MAINBOOK.ipynb`) to match your local directory structure.
 
 ---
 
@@ -81,7 +81,7 @@ jupyter notebook
 jupyter lab
 ```
 
-Open `THEGOAT.ipynb` and run cells sequentially to:
+Open `MAINBOOK.ipynb` and run cells sequentially to:
 
 * Load data
 * Define the model
@@ -94,7 +94,7 @@ Tweak the parameters to your liking.
 
 ## 🕸️ App
 
-Once youre done training, you can run the app.py script to get a webapp on localhost:7860
+Once youre done training, you can run the app.py script to get a webapp on ```localhost:7860```
 
 ---
 
@@ -109,7 +109,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 ```
 
-If you're seeing `cpu`, ensure that:
+If you're seeing `cpu` while having a compatible GPU, ensure that:
 
 * You have installed the correct version of `torch` with CUDA
 * NVIDIA drivers + CUDA toolkit are installed properly
@@ -123,7 +123,7 @@ The notebook will:
 * Print training and validation losses/accuracies
 * Plot training curves
 * Save the best model (if implemented)
-* (COMING SOON) Visualize predictions or attention maps
+* (WIP) Visualize predictions or attention maps
 
 ---
 
@@ -131,6 +131,7 @@ The notebook will:
 
 * You can tweak the learning rate, optimizer, batch size, or number of epochs for experiments.
 * For serious training use a local machine with a dedicated NVIDIA GPU.
+* Stop early to prevent overfitting for smaller datasets
 
 ---
 
