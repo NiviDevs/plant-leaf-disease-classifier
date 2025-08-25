@@ -1,10 +1,10 @@
                   precision    recall  f1-score   support
 
- Apple_Black_Rot     0.4348    0.9524    0.5970        63
-Apple_Cedar_Rust     0.0000    0.0000    0.0000        28
-   Apple_Healthy     0.8433    0.6848    0.7559       165
-      Apple_Scab     0.3404    0.2540    0.2909        63
+ Apple_Black_Rot     0.9828    0.9048    0.9421        63
+Apple_Cedar_Rust     1.0000    1.0000    1.0000        28
+   Apple_Healthy     0.9061    0.9939    0.9480       165
+      Apple_Scab     0.9615    0.7937    0.8696        63
 
-        accuracy                         0.5925       319
-       macro avg     0.4046    0.4728    0.4109       319
-    weighted avg     0.5893    0.5925    0.5663       319
+        accuracy                         0.9373       319
+       macro avg     0.9626    0.9231    0.9399       319
+    weighted avg     0.9404    0.9373    0.9359       319
