@@ -21,8 +21,7 @@ import pandas as pd
 import numpy as np
 import time
 from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
-from sklearn.metrics import roc_curve, auc, precision_recall_curve
+from sklearn.metrics import roc_curve, auc
 from sklearn.preprocessing import label_binarize
 from tqdm.auto import tqdm
 from rich.live import Live
@@ -71,7 +70,7 @@ def split_dataset(
         n = len(images)
         n_train = int(n * train_ratio)
         n_val = int(n * val_ratio)
-        n_test = n - n_train - n_val
+        #n_test = n - n_train - n_val
 
         splits = {
             "train": images[:n_train],
@@ -599,7 +598,7 @@ plt.show()
 
 # 4. Inference Time
 avg_inference_time = np.mean(inference_times)
-print(f"--- Inference ---")
+print("--- Inference ---")
 print(f"Average inference time per image: {avg_inference_time * 1000:.4f} ms")
 wandb.summary["inference_time_ms"] = avg_inference_time * 1000
 
@@ -658,7 +657,7 @@ tsne_results = tsne.fit_transform(all_embeddings)
 df_tsne = pd.DataFrame()
 df_tsne["tsne-2d-one"] = tsne_results[:, 0]
 df_tsne["tsne-2d-two"] = tsne_results[:, 1]
-df_tsne["label"] = [class_names[l] for l in all_labels]
+df_tsne["label"] = [class_names[label] for label in all_labels]
 
 plt.figure(figsize=(10, 8))
 sns.scatterplot(
